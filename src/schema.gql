@@ -1,0 +1,37 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Invoice {
+  """Fatura Id si"""
+  id: Int!
+
+  """Fatura Tipidir"""
+  type: String!
+}
+
+type Query {
+  invoices: [Invoice!]!
+  invoice(id: Int!): Invoice!
+}
+
+type Mutation {
+  createInvoice(createInvoiceInput: CreateInvoiceInput!): Invoice!
+  updateInvoice(updateInvoiceInput: UpdateInvoiceInput!): Invoice!
+  removeInvoice(id: Int!): Invoice!
+}
+
+input CreateInvoiceInput {
+  """Fatura Id si"""
+  id: Int!
+
+  """Fatura Tipidir"""
+  type: String!
+}
+
+input UpdateInvoiceInput {
+  id: Int!
+
+  """Fatura Tipidir"""
+  type: String
+}
