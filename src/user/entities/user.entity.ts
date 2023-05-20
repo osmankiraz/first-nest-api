@@ -1,11 +1,13 @@
 import { Address } from 'src/address/entities/address.entity';
+import { Photo } from 'src/photo/entities/photo.entity';
 import {
   Column,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryColumn,
-  PrimaryGeneratedColumn
+  PrimaryGeneratedColumn,
 } from 'typeorm';
 
 @Entity()
@@ -23,11 +25,14 @@ export class User {
   password: string;
 
   @Column({
-    nullable: true
+    nullable: true,
   })
   age: number;
 
-  @OneToOne(()=>Address,address => address.user)
+  @OneToOne(() => Address, (address) => address.user)
   @JoinColumn()
-  address:Address
+  address: Address;
+
+  @OneToMany(() => Photo, (photo) => photo.user)
+  photos: Photo[];
 }

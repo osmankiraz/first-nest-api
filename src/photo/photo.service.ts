@@ -9,15 +9,22 @@ import { InjectRepository } from '@nestjs/typeorm';
 export class PhotoService {
   constructor(
     @InjectRepository(Photo)
-    private usersRepository: Repository<Photo>,
+    private photoRepo: Repository<Photo>,
   ) {}
 
-  create(createPhotoDto: CreatePhotoDto) {
-    return 'This action adds a new photo';
+  async create(createPhotoDto: CreatePhotoDto) {
+    const newPhoto = this.photoRepo.create(createPhotoDto);
+    const res = await this.photoRepo.save(newPhoto);
+    return res;
   }
 
-  findAll() {
-    return this.usersRepository.find();
+  async findAll() {
+    const expandedPhoto = await this.photoRepo
+      .createQueryBuilder('photo')
+      .leftJoinAndSelect('photo.user', 'user')
+      .getMany();
+    // return this.photoRepo.find();
+    return expandedPhoto;
   }
 
   findOne(id: number) {

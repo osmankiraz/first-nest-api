@@ -14,7 +14,7 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const userInstance = this.usersRepository.create(createUserDto);
-    const res = this.usersRepository.save(userInstance);
+    const res = await this.usersRepository.save(userInstance);
     return res;
   }
 
@@ -22,6 +22,7 @@ export class UserService {
     const expandedUsers = await this.usersRepository
       .createQueryBuilder('user')
       .leftJoinAndSelect('user.address', 'address')
+      .leftJoinAndSelect('user.photos', 'photo')
       .getMany();
     return expandedUsers;
   }
@@ -55,13 +56,9 @@ export class UserService {
 
   async remove(id: number) {
     const user = await this.findOne(id);
-    // const res = await this.usersRepository.delete(user.id)
     const res = await this.usersRepository.remove(user);
     if (res) {
-      throw new HttpException(
-        `User with id  ${id} deleted `,
-        HttpStatus.OK,
-      );
+      throw new HttpException(`User with id  ${id} deleted `, HttpStatus.OK);
     }
   }
 }

@@ -1,8 +1,5 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn
-} from 'typeorm';
+import { User } from 'src/user/entities/user.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class Photo {
@@ -12,4 +9,7 @@ export class Photo {
   @Column() byte: number;
   @Column() width: number;
   @Column() height: number;
+
+  @ManyToOne(() => User, (user) => user.photos)
+  user: User;
 }
