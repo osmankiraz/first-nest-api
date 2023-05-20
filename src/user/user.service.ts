@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,23 +12,56 @@ export class UserService {
     private usersRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto) {
+    const userInstance = this.usersRepository.create(createUserDto);
+    const res = this.usersRepository.save(userInstance);
+    return res;
   }
 
-  findAll() {
-    return this.usersRepository.find();
+  async findAll() {
+    const expandedUsers = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.address', 'address')
+      .getMany();
+    return expandedUsers;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: number) {
+    const expandedUser = await this.usersRepository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.address', 'address')
+      .where(`user.id = ${id}`)
+      .getOne();
+    if (expandedUser) {
+      return expandedUser;
+    } else {
+      throw new HttpException(
+        `User with id ${id} not found `,
+        HttpStatus.NOT_FOUND,
+      );
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    let user = await this.findOne(id);
+    user = {
+      ...user,
+      ...updateUserDto,
+    };
+    // const res = await this.usersRepository.update(user.id, user);
+    const res = await this.usersRepository.save(user);
+    return res;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async remove(id: number) {
+    const user = await this.findOne(id);
+    // const res = await this.usersRepository.delete(user.id)
+    const res = await this.usersRepository.remove(user);
+    if (res) {
+      throw new HttpException(
+        `User with id  ${id} deleted `,
+        HttpStatus.OK,
+      );
+    }
   }
 }
