@@ -10,6 +10,8 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { join } from 'path';
 import { AddressModule } from './address/address.module';
+import { CityModule } from './city/city.module';
+import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     UserModule,
@@ -21,7 +23,9 @@ import { AddressModule } from './address/address.module';
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
     }),
-    AddressModule
+    AddressModule,
+    CityModule,
+    AuthModule
   
   ],
   controllers: [],

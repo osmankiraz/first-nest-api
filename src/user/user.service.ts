@@ -14,6 +14,10 @@ export class UserService {
 
   async create(createUserDto: CreateUserDto) {
     const userInstance = this.usersRepository.create(createUserDto);
+    const _u = this.findOneByUserName(userInstance.username);
+    if (_u) {
+      throw new HttpException(`User already exist `, HttpStatus.CONFLICT);
+    }
     const res = await this.usersRepository.save(userInstance);
     return res;
   }
@@ -38,6 +42,17 @@ export class UserService {
     } else {
       throw new HttpException(
         `User with id ${id} not found `,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+  }
+  async findOneByUserName(username: string) {
+    const _user = await this.usersRepository.findOneBy({ username });
+    if (_user) {
+      return _user;
+    } else {
+      throw new HttpException(
+        `User with id ${username} not found `,
         HttpStatus.NOT_FOUND,
       );
     }
