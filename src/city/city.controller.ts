@@ -1,9 +1,10 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
 import { CityService } from './city.service';
 import { CreateCityDto } from './dto/create-city.dto';
 import { UpdateCityDto } from './dto/update-city.dto';
 import { Paginate, PaginateQuery, Paginated } from 'nestjs-paginate';
 import { City } from './entities/city.entity';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @Controller('city')
 export class CityController {
